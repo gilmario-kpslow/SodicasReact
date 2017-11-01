@@ -1,0 +1,1 @@
+export const USER_LODADO_KEY = "USER_LOGADO_SODICAS"

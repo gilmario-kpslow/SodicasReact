@@ -1,0 +1,1 @@
+export const AUTOR_KEY = "AUTOR_LOCALSTORAGE_KEY"
