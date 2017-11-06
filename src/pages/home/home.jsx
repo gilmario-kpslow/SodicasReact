@@ -8,9 +8,12 @@ export default class Home extends Component {
         super(props)
         this.service = new DicaService()
         this.tagService = new TagService()
-        this.state = { opcoes: [], dicas: [], dados: {} }
+        this.state = { opcoes: [], dicas: [], dados: { titulo : '', tags : []}, filtro : false, offset : 0 }
         this.getItemSelecionado = this.getItemSelecionado.bind(this)
         this.removeTag = this.removeTag.bind(this)
+        this.mais = this.mais.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.filtrar = this.filtrar.bind(this)
     }
 
     componentWillMount() {
@@ -56,7 +59,32 @@ export default class Home extends Component {
         ))
     }
     mais() {
+        let offset = this.state.offset + 3;
+        this.setState({...this.state,offset:offset})
+        if(this.state.filtro){
+            this.service.filtrar(this.state.dados,offset).then(resp => {
+                let dicas = this.state.dicas
+                resp.data.forEach(dica => dicas.push(dica))
+                this.setState({...this.state, dicas : dicas})
+            })
+        }else{
+            this.service.lancamento(offset).then(resp => {
+                let dicas = this.state.dicas
+                resp.data.forEach(dica => dicas.push(dica))
+                this.setState({...this.state, dicas : dicas})
+            })
+        }
+    }
 
+    filtrar(){
+        this.service.filtrar(this.state.dados,0)
+        .then(resp => {
+            this.setState({...this.state,filtro : true, dicas : resp.data}); 
+        })
+    }
+
+    handleChange(e){
+        this.setState({...this.state, dados : {...this.state.dados, titulo : e.target.value}})
     }
 
     render() {
@@ -77,9 +105,9 @@ export default class Home extends Component {
                                 <div className="row">
                                     <div className="col-12">
                                         <div className="input-group">
-                                            <input className="form-control" type="text" placeholder="Buscar uma dica" />
+                                            <input id="tituloBuscar" type='text' value={this.state.dados.titulo} onChange={this.handleChange} className="form-control" placeholder="Buscar uma dica" />
                                             <span className="input-group-btn">
-                                                <button className="btn btn-primary">
+                                                <button onClick={this.filtrar} className="btn btn-primary">
                                                     <i className="fa fa-search"></i>
                                                     Buscar
                                                 </button>
@@ -107,7 +135,7 @@ export default class Home extends Component {
                     </div>
                     <div className="row">
                         <div className="col-3 mx-auto">
-                            <button onClick={this.mais()} className="btn btn-light">Mais Resultados</button>
+                            <button onClick={this.mais} className="btn btn-light">Mais Resultados</button>
                         </div>
                     </div>
                 </div>

@@ -1,17 +1,15 @@
+import axios from 'axios'
+import {HOST} from '../constants'
 export default class ComentarioService{
-    constructor(http){
-        this._path = 'comentario'
-        this._http = http
+    constructor(){
+        this._path = `${HOST}/comentario`
     }
 
     cadastrar(comentario){
-        console.log(comentario)
-        return this._http.post(`${this._path}/${comentario.dica.id}`,comentario)
-        .then(res => res.json())
+        return axios.post(`${this._path}/${comentario.dica.id}`,comentario)
     }
 
     buscar(dicaId){
-        return this._http.get(`${this._path}/${dicaId}`)
-        .then(res => res.json())
+        return axios.get(`${this._path}/${dicaId}`)
     }
 }

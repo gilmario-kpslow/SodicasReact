@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import {Link} from 'react-router-dom'
 import Rating from '../rating/rating'
 import './cardDica.css'
 
@@ -43,7 +44,7 @@ export default class CardDica extends Component {
                     </div>
                     <div className="row">
                         <div className="col mr-auto">
-                            <a href="#">Ver Mais</a>
+                            <Link to={`dica/${this.props.dica.id}`}>Ver Mais</Link>
                         </div>
                     </div>
                     <div className="row">

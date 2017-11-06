@@ -1,0 +1,16 @@
+.message{
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index : 99999999;
+    margin: 15px;
+    opacity: 0.9;
+    width: auto;
+}
+.prog{
+    height: 3px;
+}
+
+.text-message{
+    margin-right: 20px;
+}
