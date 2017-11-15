@@ -11,6 +11,8 @@ export default class Dica {
             this.pontuacao = jDica.pontuacao
             this.comentarios = jDica.comentarios;
         }else{
+            this.titulo = ''
+            this.conteudo =''
             this.tags = []
         }
     }

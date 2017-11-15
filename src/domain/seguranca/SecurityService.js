@@ -11,7 +11,8 @@ export default class SecurityService {
 
     login(credencias) {
         return axios.post(`${this._path}/login`, credencias)
-            .then(user => {
+            .then(resp => {
+                let user = resp.data
                 localStorage.removeItem(KEY_LOCALSTOREGE_USER)
                 localStorage.setItem(KEY_LOCALSTOREGE_USER, JSON.stringify({ username: user.username, token: user.token }))
                 UsuarioService.setUsuario(new Usuario(user.usuario.username, user.usuario.email))
@@ -20,11 +21,11 @@ export default class SecurityService {
             })
     }
 
-    isLogado() {
+    static isLogado() {
         return localStorage.getItem(KEY_LOCALSTOREGE_USER) ? true : false;
     }
 
-    usuarioLogado() {
+    static usuarioLogado() {
         return JSON.parse(localStorage.getItem(KEY_LOCALSTOREGE_USER));
     }
 
@@ -37,7 +38,7 @@ export default class SecurityService {
         }).then(dado => true, err => false);
     }
 
-    logout() {
+    static logout() {
         localStorage.removeItem(KEY_LOCALSTOREGE_USER)
         UsuarioService.removeUsuario()
         AutorService.removeAutor()

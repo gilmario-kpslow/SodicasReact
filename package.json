@@ -43,6 +43,7 @@
     "webpack-dev-server": "^2.9.2"
   },
   "devDependencies": {
+    "prop-types": "^15.6.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-multi": "^0.1.12",

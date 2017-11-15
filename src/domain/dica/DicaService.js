@@ -3,7 +3,7 @@ import axios from 'axios'
 import {HOST} from '../constants'
 export default class DicaService {
 
-    constructor(http) {
+    constructor() {
         this._path = `${HOST}/dica`
     }
 

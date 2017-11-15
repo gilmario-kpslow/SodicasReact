@@ -3,7 +3,7 @@ import {HOST} from '../constants'
 import axios from 'axios'
 export default class TagService{
     
-    constructor(http){
+    constructor(){
         this._path = `${HOST}/tag`
     }
 

@@ -37,8 +37,18 @@ export default class RatingVotar extends Component{
 
     marcar(star){
         let stars = this.state.stars.map(st => {
-            if(st.id == star.id){
-                st.marcado = ! st.marcado
+            if(star.marcado){
+                if(st.id > star.id){
+                    st.marcado = false
+                }else{
+                    st.marcado = true
+                }    
+            }else{
+                if(st.id <= star.id){
+                    st.marcado = true
+                }else{
+                    st.marcado = false
+                }
             }
             return st 
         })

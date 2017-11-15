@@ -1,6 +1,33 @@
 import React, { Component } from 'react'
+import {withRouter} from 'react-router-dom'
+import {bindActionCreators} from 'redux'
+import {connect} from 'react-redux'
+import {usuarioLogado} from '../../domain/seguranca/securityActions'
+import SecurityService from '../../domain/seguranca/SecurityService'
 
-export default class Login extends Component {
+class Login extends Component {
+
+    constructor(props){
+        super(props)
+        this.state = {credencias : {username : '', senha : ''}}
+        this.login = this.login.bind(this)
+        this.changeInput = this.changeInput.bind(this)
+        this.service = new SecurityService()
+    }
+
+    login(){
+        this.service.login(this.state.credencias).then(resp => {
+            this.props.usuarioLogado()
+            this.props.history.push('/')
+        })
+    }
+
+    changeInput(e){
+        const name = e.target.name
+        const value = e.target.value
+        this.setState({...this.state, credencias : {...this.state.credencias, [name] : value}})
+    }
+
     render() {
         return (
             <div>
@@ -27,7 +54,7 @@ export default class Login extends Component {
                                             <div className="input-group-addon">
                                                 <i className="fa fa-user"></i>
                                             </div>
-                                            <input className="form-control" type="text" placeholder="username" />
+                                            <input name="username" onChange={this.changeInput} value={this.state.credencias.username} className="form-control" type="text" placeholder="username" />
                                         </div>
                                     </div>
                                     <div className="form-group">
@@ -35,11 +62,11 @@ export default class Login extends Component {
                                             <div className="input-group-addon">
                                                 <i className="fa fa-lock"></i>
                                             </div>
-                                            <input className="form-control" type="password" placeholder="senha" />
+                                            <input name="senha" onChange={this.changeInput} value={this.state.credencias.senha} className="form-control" type="password" placeholder="senha" />
                                         </div>
                                     </div>
                                     <div className="form-group">
-                                        <button className="btn btn-primary">
+                                        <button onClick={this.login} className="btn btn-primary">
                                             Entrar
                                 </button>
                                         <a className="btn btn-link" href="sigup">
@@ -55,3 +82,6 @@ export default class Login extends Component {
         )
     }
 }
+Login = withRouter(Login)
+const mapDispacthToProps = dispatch => bindActionCreators({usuarioLogado},dispatch)
+export default connect(null,mapDispacthToProps)(Login)

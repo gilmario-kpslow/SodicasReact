@@ -8,12 +8,15 @@ import thunk from 'redux-thunk'
 import App from './main/app'
 import { BrowserRouter as Router } from 'react-router-dom'
 import messageReducer from './components/shared/message/messageReducer'
+import securityReducer from './domain/seguranca/securityReducer'
 
 const devTools = window.__REDUX_DEVTOOLS_EXTENSION__
   && window.__REDUX_DEVTOOLS_EXTENSION__()
 
 const reducers = combineReducers({
-    message : messageReducer
+    message : messageReducer,
+    security : securityReducer,
+
 })
 
 const store = applyMiddleware(multi, promise, thunk)(createStore)(reducers, devTools)
