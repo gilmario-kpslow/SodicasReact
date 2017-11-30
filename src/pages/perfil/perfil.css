@@ -1,0 +1,15 @@
+.area-user {
+    height: 100vh;
+}
+
+.block-img {
+    margin-bottom: 10px
+}
+
+.clicavel {
+    cursor: pointer;
+}
+
+.card-div {
+    margin: 15px;
+}

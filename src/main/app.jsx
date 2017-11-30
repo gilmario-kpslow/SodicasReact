@@ -8,7 +8,10 @@ import Home from '../pages/home/home'
 import Login from '../pages/login/login'
 import ComponentOrLogin from '../components/shared/seguranca/componentOrLogin'
 import Area from '../pages/area/area'
+import Perfil from '../pages/perfil/perfil'
 import Post from '../pages/post/post'
+import Sigup from '../pages/sigup/sigup'
+import Acesso from '../pages/acesso/acesso'
 export default props =>
     (
         <div>
@@ -23,7 +26,17 @@ export default props =>
                         <Area />
                     </ComponentOrLogin>
                 </Route>
-                <Route path="/acesso" component={Login} />
+                <Route path="/perfil">
+                    <ComponentOrLogin>
+                        <Perfil />
+                    </ComponentOrLogin>
+                </Route>
+                <Route path="/sigup" component={Sigup} />
+                <Route path="/acesso">
+                    <ComponentOrLogin>
+                        <Acesso />
+                    </ComponentOrLogin>
+                </Route>
                 <Route path="*" component={Home} />
             </Switch>
         </div>

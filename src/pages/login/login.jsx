@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import {withRouter} from 'react-router-dom'
-import {bindActionCreators} from 'redux'
-import {connect} from 'react-redux'
-import {usuarioLogado} from '../../domain/seguranca/securityActions'
+import { withRouter, Link } from 'react-router-dom'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import { usuarioLogado, logout } from '../../domain/seguranca/securityActions'
+import { autorSetado } from '../../domain/autor/AutorActions'
+import { show } from '../../components/shared/message/messageAction'
 import SecurityService from '../../domain/seguranca/SecurityService'
 
 class Login extends Component {
@@ -13,12 +15,20 @@ class Login extends Component {
         this.login = this.login.bind(this)
         this.changeInput = this.changeInput.bind(this)
         this.service = new SecurityService()
+        this.props.logout();
     }
 
     login(){
         this.service.login(this.state.credencias).then(resp => {
             this.props.usuarioLogado()
+            this.props.autorSetado()
             this.props.history.push('/')
+        }).catch(err => {
+            if(err.response.status == 401){
+                this.props.show({msg: 'Usuário ou senha inválida', tipo : 'danger'})
+            }else{
+                console.log(err.message)
+            }
         })
     }
 
@@ -68,10 +78,10 @@ class Login extends Component {
                                     <div className="form-group">
                                         <button onClick={this.login} className="btn btn-primary">
                                             Entrar
-                                </button>
-                                        <a className="btn btn-link" href="sigup">
+                                        </button>
+                                        <Link className="btn btn-link" to="/sigup">
                                             Cadastrar
-                                </a>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
@@ -83,5 +93,5 @@ class Login extends Component {
     }
 }
 Login = withRouter(Login)
-const mapDispacthToProps = dispatch => bindActionCreators({usuarioLogado},dispatch)
+const mapDispacthToProps = dispatch => bindActionCreators({usuarioLogado, logout, autorSetado, show},dispatch)
 export default connect(null,mapDispacthToProps)(Login)

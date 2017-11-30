@@ -15,7 +15,7 @@ export default class SecurityService {
                 let user = resp.data
                 localStorage.removeItem(KEY_LOCALSTOREGE_USER)
                 localStorage.setItem(KEY_LOCALSTOREGE_USER, JSON.stringify({ username: user.username, token: user.token }))
-                UsuarioService.setUsuario(new Usuario(user.usuario.username, user.usuario.email))
+                UsuarioService.setUsuario(new Usuario(user.usuario.username, user.usuario.email, user.usuario.autor))
                 AutorService.setAutor(user.usuario.autor)
                 return user
             })

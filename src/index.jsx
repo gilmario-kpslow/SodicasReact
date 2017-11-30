@@ -9,6 +9,7 @@ import App from './main/app'
 import { BrowserRouter as Router } from 'react-router-dom'
 import messageReducer from './components/shared/message/messageReducer'
 import securityReducer from './domain/seguranca/securityReducer'
+import autorReducer from './domain/autor/AutorReducer'
 
 const devTools = window.__REDUX_DEVTOOLS_EXTENSION__
   && window.__REDUX_DEVTOOLS_EXTENSION__()
@@ -16,7 +17,7 @@ const devTools = window.__REDUX_DEVTOOLS_EXTENSION__
 const reducers = combineReducers({
     message : messageReducer,
     security : securityReducer,
-
+    autor : autorReducer
 })
 
 const store = applyMiddleware(multi, promise, thunk)(createStore)(reducers, devTools)

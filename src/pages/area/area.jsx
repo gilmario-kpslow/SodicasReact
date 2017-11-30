@@ -18,21 +18,14 @@ class Area extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            dica: { titulo: "", conteudo: "", tags: [] }, autor: {}, tag: {}, erros: [], tagsOption: [], dicas: [],
-            titulo: { haErro: false, valide: ['required'], errors: [] },
-            conteudo: { haErro: false, valide: ['required'], errors: [] },
-            tags: { haErro: false, valide: ['required'], errors: [] },
+            dica: new Dica(), autor: {}, tag: {}, erros: [], tagsOption: [], dicas: [],
             modalTag: false,
             modalConformacao: false
         }
         this.service = new DicaService()
         this.tagService = new TagService()
         this.changeInput = this.changeInput.bind(this)
-        this.addError = this.addError.bind(this)
-        this.validarCampo = this.validarCampo.bind(this)
-        this.validar = this.validar.bind(this)
-        this.getErros = this.getErros.bind(this)
-        this.validadeAll = this.validadeAll.bind(this)
+        this.changeSelect = this.changeSelect.bind(this)
         this.addDica = this.addDica.bind(this)
         this.addTag = this.addTag.bind(this)
         this.limparForm = this.limparForm.bind(this)
@@ -43,6 +36,7 @@ class Area extends Component {
         this.renderTags = this.renderTags.bind(this)
         this.showModal = this.showModal.bind(this)
         this.hideModal = this.hideModal.bind(this)
+        this.tituloInput = null;
     }
 
     componentWillMount() {
@@ -61,115 +55,61 @@ class Area extends Component {
         let nameObjeto = names[0]
         let name = names[1]
         let value = e.target.value
-        console.log(value)
-        if (name == "tags") {
-            let tags = this.state.dica[name] || [];
-            tags.push(value)
-            value = tags
-        }
         this.setState({ ...this.state, [nameObjeto]: { ...this.state[nameObjeto], [name]: value } })
     }
 
-    addError(campo, mensagem) {
-        const gera_id = () => {
-            var size = 8
-            var randomized = Math.ceil(Math.random() * Math.pow(10, size));//Cria um número aleatório do tamanho definido em size.
-            var digito = Math.ceil(Math.log(randomized));//Cria o dígito verificador inicial
-            while (digito > 10) {//Pega o digito inicial e vai refinando até ele ficar menor que dez
-                digito = Math.ceil(Math.log(digito));
-            }
-            var id = randomized + '-' + digito;//Cria a ID
-            return id
+    changeSelect(e) {
+        const names = e.target.name.split(".");
+        let nameObjeto = names[0]
+        let name = names[1]
+        let value = +e.target.value
+        console.log(value)
+        let tags = this.state.dica[name] || [];
+        let index = tags.indexOf(value); 
+        if(index === -1){
+            tags.push(value);
+        }else if(index > -1){
+            tags.splice(index,1)
         }
-        const valide = this.state[campo].valide || [];
-        let errors = this.state[campo].errors || [];
-        let possui = false;
-        errors.forEach(err => {
-            if (err.msg == mensagem) {
-                possui = true
-            }
-        })
-        if (!possui) {
-            errors.push({ id: gera_id(), msg: mensagem })
-        }
-        this.setState({ ...this.state, [campo]: {...this.state[campo], haErro : true, errors} });
-    }
-
-    validarCampo(e) {
-        let names = e.target.name
-        let name = names.split('.')[1]
-        let value = e.target.value
-        this.validar(name, value, this.state[name].valide)
-
-    }
-
-    validar(name, value, validate) {
-        validate.forEach(val => {
-            switch (val) {
-                case 'required':
-                    console.log(value.length == 0)
-                    if (value.length == 0) {
-                        this.addError(name, "Campo Obrigatório")
-                    } else {
-                        this.setState({ ...this.state, [name]: { ...this.state[name], haErro: false, errors: [] } })
-                    }
-                    break
-                default:
-                    console.log("aqui " + name + " " + value)
-                    this.setState({ ...this.state, [name]: { ...this.state[name], haErro: false, errors: [] } })
-            }
-        })
-
-    }
-
-    getErros(campo) {
-        const erros = this.state[campo].errors || []
-        return erros.map(m => (
-            <div key={m.id} className="invalid-feedback">{m.msg}</div>
-        ))
-
-    }
-
-    validadeAll() {
-        let campos = ['titulo', 'conteudo', 'tags']
-        let erro = false;
-        campos.forEach(val => {
-            let valor = this.state.dica[val];
-            this.validar(val, valor, this.state[val].valide)
-        })
-        return !(this.state.titulo.errors.length > 0 || this.state.conteudo.errors.length > 0 || this.state.tags.errors.length > 0)
+        this.setState({ ...this.state, [nameObjeto]: { ...this.state[nameObjeto], [name]: tags } })
     }
 
     addDica() {
-        let hasErro = this.validadeAll();
-        if (hasErro) {
-            if (this.state.dica.id) {
-                this.service.alterar(this.state.dica).then(resp => this.props.show({ msg: resp.data.msg, tipo: 'success' }))
-                    .catch(
-                    err => {
-                        if (err.status == 401) {
-                            this.props.logout();
-                        }
+        const tagsOption = this.state.tagsOption || [] 
+        const tagsId = this.state.dica.tags || [];
+        const tags = tagsOption.filter((ele) => tagsId.indexOf(ele.id) > -1)
+        let dica = this.state.dica
+        dica.tags = tags
+        if (dica.id) {
+            this.service.alterar(dica).then(
+                resp => {
+                    let dicas = this.state.dicas.filter((val) => val.id != dica.id) || []
+                    dicas.push(dica);
+                    this.setState({...this.state, dicas, dica: new Dica()})
+                    this.props.show({ msg: resp.data.msg, tipo: 'success' })
+                })
+                .catch(
+                err => {
+                    if (err.response.status == 401) {
+                        this.props.logout();
                     }
-                    );
-            } else {
-                let dica = this.state.dica;
-                dica.autor = this.state.autor;
-                this.service.cadastrar(dica).then(
-                    resp => {
-                        let dicas = this.state.dicas || []
-                        dicas.push(resp.data)
-                        this.setState({ ...this.state, dicas })
-                    })
-                    .catch(
-                    err => {
-                        if (err.status == 401) {
-                            this.props.logout();
-                        }
+                }
+                );
+        } else {
+            dica.autor = this.state.autor;
+            this.service.cadastrar(dica).then(
+                resp => {
+                    let dicas = this.state.dicas || []
+                    dicas.push(new Dica(resp.data))
+                    this.setState({ ...this.state, dicas, dica: new Dica() })
+                })
+                .catch(
+                err => {
+                    if (err.response.status == 401) {
+                        this.props.logout();
                     }
-                    );
-            }
-            this.limparForm();
+                }
+                );
         }
     }
     addTag() {
@@ -181,7 +121,7 @@ class Area extends Component {
                 this.hideModal('modalTag')
             }).catch(
             err => {
-                if (err.status == 401) {
+                if (err.response.status == 401) {
                     this.props.logout();
                 }
             }
@@ -192,20 +132,22 @@ class Area extends Component {
         this.setState({ ...this.state, dica: new Dica() })
     }
     seleciona(dica) {
-        this.setState({ ...this.state, dica })
+        this.tituloInput.focus()
+        let dicaSelect = {...dica};
+        const tags = dica.tags.map(tag => tag.id)
+        dicaSelect.tags = tags
+        this.setState({ ...this.state, dica : dicaSelect})
     }
     remove() {
-        this.dicaService.remove(this.state.dica).then(
+        this.service.remove(this.state.dica).then(
             resp => {
-                let dicas = this.state.dicas || []
-                let i = dicas.indexOf(this.state.dica);
-                dicas.splice(i, 1);
+                let dicas = this.state.dicas.filter(val => val.id != this.state.dica.id) || []
                 this.setState({ ...this.state, dicas })
                 this.props.show({ msg: resp.data.msg, tipo: 'success' })
                 this.hideModal('modalConformacao');
             }).catch(
             err => {
-                if (err.status == 401) {
+                if (err.response.status == 401) {
                     this.props.logout();
                 } else {
                     this.props.show({ msg: err.data.msg, tipo: 'danger' })
@@ -233,10 +175,7 @@ class Area extends Component {
                         <button onClick={() => this.seleciona(dica)} title="alterar" className="btn btn-sm">
                             <i className="fa fa-pencil"></i>
                         </button>
-                        <button onClick={() => {
-                            this.seleciona(dica)
-                            this.showModal('modalConformacao')
-                        }
+                        <button onClick={() => this.setState({...this.state, dica, modalConformacao : true})
                         } title="Remover" className="btn btn-sm btn-danger">
                             <i className="fa fa-trash"></i>
                         </button>
@@ -249,7 +188,7 @@ class Area extends Component {
     renderTags() {
         const tags = this.state.tagsOption || []
         return tags.map(tag => (
-            <option key={tag.id} value={JSON.stringify(tag)}>{tag.nome}</option>
+            <option key={tag.id} value={tag.id}>{tag.nome}</option>
         ))
     }
     renderModais() {
@@ -312,20 +251,14 @@ class Area extends Component {
                                         <div className="card-body">
                                             <div className="form-group">
                                                 <label className="control-label">Titulo</label>
-                                                <input name="dica.titulo" onChange={this.changeInput} onBlur={this.validarCampo} value={this.state.dica.titulo}
-                                                    className={`form-control ${this.state.titulo.haErro ? 'is-invalid' : ''}`} type="text"
+                                                <input ref={(input) => { this.tituloInput = input; }} name="dica.titulo" onChange={this.changeInput} value={this.state.dica.titulo}
+                                                    className='form-control' type="text"
                                                     placeholder="Informe o titulo pra sua dica" />
-                                                <If test={this.state.titulo.haErro}>
-                                                    {this.getErros('titulo')}
-                                                </If>
                                             </div>
                                             <div className="form-group">
                                                 <label className="control-label">Conteúdo</label>
-                                                <textarea onChange={this.changeInput} name="dica.conteudo" onBlur={this.validarCampo} className={`form-control ${this.state.conteudo.haErro ? 'is-invalid' : ''}`}
+                                                <textarea onChange={this.changeInput} name="dica.conteudo" className='form-control'
                                                     value={this.state.dica.conteudo} placeholder="Informe sua dica"></textarea>
-                                                <If test={this.state.conteudo.haErro}>
-                                                    {this.getErros('conteudo')}
-                                                </If>
                                             </div>
                                             <div className="form-group">
                                                 <label className="control-label"> Tags
@@ -333,12 +266,9 @@ class Area extends Component {
                                                         <i className="fa fa-plus"></i>
                                                     </button>
                                                 </label>
-                                                <select onChange={this.changeInput} onBlur={this.validarCampo} name="dica.tags" className={`form-control ${this.state.tags.haErro ? 'is-invalid' : ''}`} value={this.state.dica.tags} multiple={true} size="5">
+                                                <select onChange={this.changeSelect} name="dica.tags" className='form-control' value={this.state.dica.tags} multiple={true} size="5">
                                                     {this.renderTags()}
                                                 </select>
-                                                <If test={this.state.tags.haErro}>
-                                                    {this.getErros('tags')}
-                                                </If>
                                             </div>
                                             <div className="form-group">
                                                 <button onClick={this.addDica} className="btn btn-primary">Salvar</button>
