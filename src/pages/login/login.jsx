@@ -6,7 +6,7 @@ import { usuarioLogado, logout } from '../../domain/seguranca/securityActions'
 import { autorSetado } from '../../domain/autor/AutorActions'
 import { show } from '../../components/shared/message/messageAction'
 import SecurityService from '../../domain/seguranca/SecurityService'
-
+import AutorService from '../../domain/autor/AutorService'
 class Login extends Component {
 
     constructor(props){
@@ -22,7 +22,11 @@ class Login extends Component {
         this.service.login(this.state.credencias).then(resp => {
             this.props.usuarioLogado()
             this.props.autorSetado()
-            this.props.history.push('/')
+            if(AutorService.getAutor()){
+                this.props.history.push('/area')
+            }else{
+                this.props.history.push('/perfil')
+            }
         }).catch(err => {
             if(err.response.status == 401){
                 this.props.show({msg: 'Usuário ou senha inválida', tipo : 'danger'})
