@@ -1,1 +1,1 @@
-export const HOST = "http://localhost:8080/v1"
+export const HOST = "http://servidor.truesystem.com.br:8081/v1"
