@@ -20,8 +20,8 @@ class Login extends Component {
 
     login(){
         this.service.login(this.state.credencias).then(resp => {
-            this.props.usuarioLogado()
             this.props.autorSetado()
+            this.props.usuarioLogado()
             if(AutorService.getAutor()){
                 this.props.history.push('/area')
             }else{
