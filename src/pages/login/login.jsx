@@ -65,16 +65,16 @@ class Login extends Component {
                                 <div className="card-body">
                                     <div className="form-group">
                                         <div className="input-group">
-                                            <div className="input-group-addon">
-                                                <i className="fa fa-user"></i>
+                                            <div className="input-group-prepend">
+                                                <i className="input-group-text fa fa-user"></i>
                                             </div>
                                             <input name="username" onChange={this.changeInput} value={this.state.credencias.username} className="form-control" type="text" placeholder="username" />
                                         </div>
                                     </div>
                                     <div className="form-group">
                                         <div className="input-group">
-                                            <div className="input-group-addon">
-                                                <i className="fa fa-lock"></i>
+                                            <div className="input-group-prepend">
+                                                <i className="input-group-text fa fa-lock"></i>
                                             </div>
                                             <input name="senha" onChange={this.changeInput} value={this.state.credencias.senha} className="form-control" type="password" placeholder="senha" />
                                         </div>

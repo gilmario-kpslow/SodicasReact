@@ -65,40 +65,40 @@ class FormSigup extends Component {
                 <div className="card-body">
                     <div className="form-group">
                         <div className="input-group">
-                            <span className="input-group-addon">
-                                <i className="fa fa-user"></i>
+                            <span className="input-group-prepend">
+                                <i className="input-group-text fa fa-user"></i>
                             </span>
                             <input name="usuario.username" onChange={this.changeInput} value={this.state.usuario.username} disabled={this.props.alterar} className="form-control" type="text" placeholder="username" />
                         </div>
                     </div>
                     <div className="form-group">
                         <div className="input-group">
-                            <span className="input-group-addon">
-                                <i className="fa fa-envelope"></i>
+                            <span className="input-group-prepend">
+                                <i className="input-group-text fa fa-envelope"></i>
                             </span>
                             <input name="usuario.email" onChange={this.changeInput} value={this.state.usuario.email} className="form-control" type="email" placeholder="Email" />
-                            <span className="input-group-addon">
-                                <i className="fa fa-check"></i>
+                            <span className="input-group-append">
+                                <i className="input-group-text fa fa-check"></i>
                             </span>
                         </div>
                     </div>
                     <div className="form-group">
                         <div className="input-group">
-                            <span className="input-group-addon">
-                                <i className="fa fa-lock"></i>
+                            <span className="input-group-prepend">
+                                <i className="input-group-text fa fa-lock"></i>
                             </span>
                             <input name="usuario.senha" onChange={this.changeInput} value={this.state.usuario.senha} className="form-control" type="password" placeholder="senha" />
                         </div>
                     </div>
                     <div className="form-group">
                         <div className="input-group">
-                            <span className="input-group-addon">
-                                <i className="fa fa-lock"></i>
+                            <span className="input-group-prepend">
+                                <i className="input-group-text fa fa-lock"></i>
                             </span>
                             <input onBlur={this.checarSenha} onChange={this.changeInput} name="confsenha"
                                 value={this.state.confsenha} className={`form-control ${!this.state.valido ? 'is-invalid' : ''}`} type="password" placeholder="repetir senha" />
-                            <span className="input-group-addon">
-                                <i className={`fa ${this.state.valido ? 'fa-check is-valid' : 'fa-exclamation-triangle is-invalid'}`}></i>
+                            <span className="input-group-append">
+                                <i className={`input-group-text fa ${this.state.valido ? 'fa-check is-valid' : 'fa-exclamation-triangle is-invalid'}`}></i>
                             </span>
                         </div>
                     </div>

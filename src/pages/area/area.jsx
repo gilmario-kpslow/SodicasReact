@@ -18,7 +18,7 @@ class Area extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            dica: new Dica(), autor: {}, tag: {}, erros: [], tagsOption: [], dicas: [],
+            dica: new Dica(), autor: {}, tag: { nome: '' }, erros: [], tagsOption: [], dicas: [],
             modalTag: false,
             modalConformacao: false
         }
@@ -63,19 +63,18 @@ class Area extends Component {
         let nameObjeto = names[0]
         let name = names[1]
         let value = +e.target.value
-        console.log(value)
         let tags = this.state.dica[name] || [];
-        let index = tags.indexOf(value); 
-        if(index === -1){
+        let index = tags.indexOf(value);
+        if (index === -1) {
             tags.push(value);
-        }else if(index > -1){
-            tags.splice(index,1)
+        } else if (index > -1) {
+            tags.splice(index, 1)
         }
         this.setState({ ...this.state, [nameObjeto]: { ...this.state[nameObjeto], [name]: tags } })
     }
 
     addDica() {
-        const tagsOption = this.state.tagsOption || [] 
+        const tagsOption = this.state.tagsOption || []
         const tagsId = this.state.dica.tags || [];
         const tags = tagsOption.filter((ele) => tagsId.indexOf(ele.id) > -1)
         let dica = this.state.dica
@@ -85,15 +84,15 @@ class Area extends Component {
                 resp => {
                     let dicas = this.state.dicas.filter((val) => val.id != dica.id) || []
                     dicas.push(dica);
-                    this.setState({...this.state, dicas, dica: new Dica()})
+                    this.setState({ ...this.state, dicas, dica: new Dica() })
                     this.props.show({ msg: resp.data.msg, tipo: 'success' })
                 })
                 .catch(
-                err => {
-                    if (err.response.status == 401) {
-                        this.props.logout();
+                    err => {
+                        if (err.response.status == 401) {
+                            this.props.logout();
+                        }
                     }
-                }
                 );
         } else {
             dica.autor = this.state.autor;
@@ -104,27 +103,27 @@ class Area extends Component {
                     this.setState({ ...this.state, dicas, dica: new Dica() })
                 })
                 .catch(
+                    err => {
+                        if (err.response.status == 401) {
+                            this.props.logout();
+                        }
+                    }
+                );
+        }
+    }
+    addTag() {
+        this.tagService.cadastrar(this.state.tag).then(
+            resp => {
+                let tagsOption = this.state.tagsOption || []
+                tagsOption.push(resp.data)
+                this.setState({ ...this.state, tag: { nome : ''}, tagsOption })
+                this.hideModal('modalTag')
+            }).catch(
                 err => {
                     if (err.response.status == 401) {
                         this.props.logout();
                     }
                 }
-                );
-        }
-    }
-    addTag() {
-        this.tagService.cadastrar(this.tag).then(
-            resp => {
-                let tagsOption = this.state.tagsOption || []
-                tagsOption.push(resp.data)
-                this.setState({ ...this.state, tag: {}, tagsOption })
-                this.hideModal('modalTag')
-            }).catch(
-            err => {
-                if (err.response.status == 401) {
-                    this.props.logout();
-                }
-            }
             );
     }
 
@@ -133,10 +132,10 @@ class Area extends Component {
     }
     seleciona(dica) {
         this.tituloInput.focus()
-        let dicaSelect = {...dica};
+        let dicaSelect = { ...dica };
         const tags = dica.tags.map(tag => tag.id)
         dicaSelect.tags = tags
-        this.setState({ ...this.state, dica : dicaSelect})
+        this.setState({ ...this.state, dica: dicaSelect })
     }
     remove() {
         this.service.remove(this.state.dica).then(
@@ -146,13 +145,13 @@ class Area extends Component {
                 this.props.show({ msg: resp.data.msg, tipo: 'success' })
                 this.hideModal('modalConformacao');
             }).catch(
-            err => {
-                if (err.response.status == 401) {
-                    this.props.logout();
-                } else {
-                    this.props.show({ msg: err.data.msg, tipo: 'danger' })
+                err => {
+                    if (err.response.status == 401) {
+                        this.props.logout();
+                    } else {
+                        this.props.show({ msg: err.data.msg, tipo: 'danger' })
+                    }
                 }
-            }
             );
         this.limparForm();
     }
@@ -175,7 +174,7 @@ class Area extends Component {
                         <button onClick={() => this.seleciona(dica)} title="alterar" className="btn btn-sm">
                             <i className="fa fa-pencil"></i>
                         </button>
-                        <button onClick={() => this.setState({...this.state, dica, modalConformacao : true})
+                        <button onClick={() => this.setState({ ...this.state, dica, modalConformacao: true })
                         } title="Remover" className="btn btn-sm btn-danger">
                             <i className="fa fa-trash"></i>
                         </button>
@@ -197,7 +196,7 @@ class Area extends Component {
             <div>
                 <div className="form-group">
                     <label className="control-label">Nome</label>
-                    <input onChange={this.changeInput} value={this.state.tag.nome} className="form-control" type="text" placeholder="Informe o nome da tag" />
+                    <input onChange={this.changeInput} value={this.state.tag.nome} name="tag.nome" className="form-control" type="text" placeholder="Informe o nome da tag" />
                 </div>
             </div>
         )
